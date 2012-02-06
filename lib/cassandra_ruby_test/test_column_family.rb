@@ -5,7 +5,7 @@ class TestColumnFamily < RightSupport::DB::CassandraModel
   MAX_DETAIL_SIZE = 1024 * 1024
   TRUNCATE_MSG = "\n\n***** RECORD TRUNCATED *****\n\n"
 
-  def self.append(key, value, offset)
+  def self.append(key, value, offset=0)
     unless offset
       offset =
         if detail = TestColumnFamily.get(key)

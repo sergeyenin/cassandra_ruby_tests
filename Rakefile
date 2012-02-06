@@ -33,9 +33,21 @@ task :console do
 end
 
 namespace :db do
+  desc "clean database"
+  task :clean do
+    puts "Removing existed keyspace"
+    environment = ENV["RACK_ENV"] || "development"
+    keyspace = "CassandraRubyTest_#{environment}"
+    cassandra = Cassandra.new "system"
+    existing_keyspaces = cassandra.send(:client).describe_keyspaces.to_a.map{|k| k.name}.sort
+
+    if existing_keyspaces.include? keyspace
+      cassandra.remove(keyspace.intern)
+    end
+  end
+
   desc "setup keyspaces and column families"
-  task :setup do
-    require 'cassandra/0.8'
+  task :setup=>[:clean] do
 
     puts "Setting up Keyspaces and ColumnFamilies...."
     environment = ENV["RACK_ENV"] || "development"
@@ -44,8 +56,8 @@ namespace :db do
     cassandra = Cassandra.new "system"
     existing_keyspaces = cassandra.send(:client).describe_keyspaces.to_a.map{|k| k.name}.sort
 
-    puts "current keyspaces:"
-    existing_keyspaces.each { |ks| puts " * #{ks}"}
+    #puts "current keyspaces:"
+    #existing_keyspaces.each { |ks| puts " * #{ks}"}
 
     unless existing_keyspaces.include? keyspace
       puts "creating:"
@@ -71,7 +83,13 @@ namespace :db do
 
   desc "populate Keyspace with 10mln values"
   task :populate=> [:setup] do
-
+    n = 10 * 10**6
+    time = Benchmark.measure do
+      (1..n).each do |i|
+        TestColumnFamily.append(sprintf("%07d", i), sprintf("%07d", i))
+      end
+    end
+    puts time
   end
 
 end
