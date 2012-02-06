@@ -1,0 +1,8 @@
+development: &defaults
+  server: "127.0.0.1:9160"
+staging:
+  <<:       *defaults
+production:
+  <<:       *defaults
+test:
+  <<:       *defaults
