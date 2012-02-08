@@ -2,7 +2,7 @@ Cassandra` ruby tests in different environments
 ============================
 cleaning database(delete keyspace):
 
-   rake db:clean
+        rake db:clean
 
 creating necessary Keyspace and ColumnFamily:
 
@@ -10,7 +10,7 @@ creating necessary Keyspace and ColumnFamily:
 
 running writing and reading test:
 
-    rake db:test
+        rake db:test
 
 
 Interactive Console
