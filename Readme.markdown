@@ -6,7 +6,7 @@ cleaning database(delete keyspace):
 
 creating necessary Keyspace and ColumnFamily:
 
-	rake db:setup
+        rake db:setup
 
 running writing and reading test:
 
