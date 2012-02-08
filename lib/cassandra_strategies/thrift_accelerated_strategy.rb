@@ -18,16 +18,18 @@ class ThriftAcceleratedStrategy
   end
 
   def setup
-      raise "setup should be implemented in  CQL strategy"
+      raise "setup should be implemented in CQL strategy"
   end
 
   def write_test(wide_row_count=1000, wide_row_column_count=100, row_count=1000)
+    raise "No cassandra connection found." unless @connection
     insert_wide_rows(wide_row_count, wide_row_column_count)
     insert_rows(row_count)
   end
 
 
   def read_test
+    raise "No cassandra connection found." unless @connection
     read_wide_rows(1000)
     read_rows(1000)
   end
@@ -46,12 +48,12 @@ class ThriftAcceleratedStrategy
 
   def insert_rows(row_count)
     row_count.times do
-      @connection.insert(@column_family.intern, SimpleUUID::UUID.new.to_s,
-                            { 'email' => Forgery(:internet).email_address,
-                              'password' => Forgery(:basic).password,
-                              'first_name' => Forgery(:name).first_name,
-                              'last_name' => Forgery(:name).last_name
-                            }
+      @connection.insert(@column_family.intern, SimpleUUID::UUID.new.to_s,\
+                            { 'email' => Forgery(:internet).email_address,\
+                              'password' => Forgery(:basic).password,\
+                              'first_name' => Forgery(:name).first_name,\
+                              'last_name' => Forgery(:name).last_name\
+                            }\
                            )
     end
   end
@@ -62,6 +64,7 @@ class ThriftAcceleratedStrategy
           rows_read += 1
           #return if row_count > rows_read
     end
+    rows_read
   end
 
   def read_rows(row_count)
@@ -70,6 +73,7 @@ class ThriftAcceleratedStrategy
       rows_read += 1
       #return if row_count > rows_read
     end
+    rows_read
   end
 
 end

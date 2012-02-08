@@ -14,16 +14,16 @@ module CassandraStrategy
     raise "setup should be implemented in ConcreteStrategy"
   end
 
-  def truncate
-    raise "truncate should be implemented in ConcreteStrategy"
-  end
-
   def write_test
     raise "populate should be implemented in ConcreteStrategy"
   end
 
+  def read_test
+    raise "read_test should be implemented in ConcreteStrategy"
+  end
+
   private
-  def insert_wide_rows(row_count, column_count)
+  def insert_wide_rows
   end
 
   def insert_rows

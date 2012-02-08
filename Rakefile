@@ -5,15 +5,14 @@ Bundler.setup
 require 'rake'
 
 #requiring all stuff
-
+require 'benchmark'
 require 'yaml'
-
 
 require 'cassandra'
 require 'right_support'
 
 require File.expand_path("../lib/cassandra_ruby_test.rb",__FILE__)
-COLUMN_FAMILIES = ["ThriftAccelerated", "ThriftAcceleratedWide", "Thrift", "ThriftWide", "ThriftCQL", "ThriftCQLWide"]
+COLUMN_FAMILIES = ["ThriftAccelerated", "ThriftAcceleratedWide", "Thrift", "ThriftWide"]
 RightSupport::DB::CassandraModel.config = YAML.load_file(File.expand_path("../config/database.yml",__FILE__))
 
 if ['development', 'test'].include?(ENV['RACK_ENV'])
@@ -21,6 +20,8 @@ if ['development', 'test'].include?(ENV['RACK_ENV'])
 else
   LOGGER = RightSupport::Log::SystemLogger.new('CassandraRubyTest')
 end
+environment = ENV["RACK_ENV"] || "production"
+keyspace = "CassandraRubyTests_#{environment}"
 
 desc "fire up a console with cassandra preloaded"
 task :console do
@@ -32,29 +33,25 @@ end
 namespace :db do
   desc "clean database"
   task :clean do
-    #puts "Removing existed keyspace"
-    #environment = ENV["RACK_ENV"] || "development"
-    #keyspace = "CassandraRubyTest_#{environment}"
-    #cassandra = Cassandra.new "system"
-    #existing_keyspaces = cassandra.send(:client).describe_keyspaces.to_a.map{|k| k.name}.sort
-    #
-    #if existing_keyspaces.include? keyspace
-    #  cassandra.remove(keyspace.intern)
-    #end
+    cassandra = Cassandra.new "system"
+    existing_keyspaces = cassandra.send(:client).describe_keyspaces.to_a.map{|k| k.name}.sort
+    if existing_keyspaces.include? keyspace
+      cassandra.send(:client).system_drop_keyspace(keyspace)
+      puts "Existed keyspace #{keyspace} was successfully removed."
+    end
   end
 
   desc "setup keyspaces and column families"
   task :setup=>[:clean] do
 
     puts "Setting up Keyspaces and ColumnFamilies...."
-    environment = ENV["RACK_ENV"] || "production"
-    keyspace = "CassandraRubyTests_#{environment}"
+
 
     cassandra = Cassandra.new "system"
     existing_keyspaces = cassandra.send(:client).describe_keyspaces.to_a.map{|k| k.name}.sort
 
-    puts "current keyspaces:"
-    existing_keyspaces.each { |ks| puts " * #{ks}"}
+    #puts "current keyspaces:"
+    #existing_keyspaces.each { |ks| puts " * #{ks}"}
 
     unless existing_keyspaces.include? keyspace
       puts "creating:"
@@ -62,7 +59,7 @@ namespace :db do
       cf_defs = []
       COLUMN_FAMILIES.each do |cf|
         cf_defs << cf_def = Cassandra::ColumnFamily.new(:keyspace => keyspace, :name => cf,
-          :column_type => 'Standard', :comparator_type => 'UTF8Type')
+          :column_type => 'Standard')
       end
       env = keyspace.split("_").last
       replication_factor = 1
@@ -79,15 +76,18 @@ namespace :db do
     end
   end
 
-  desc "populate Keyspace with 10mln values"
-  task :populate=> [:setup] do
-    n = 10 * 10**6
-    time = Benchmark.measure do
-      (1..n).each do |i|
-        TestColumnFamily.append(sprintf("%07d", i), sprintf("%07d", i))
-      end
+  desc "performs tests on avaible strategies"
+  task :test=> [:setup] do
+    client1 = ThriftAcceleratedStrategy.new(keyspace, "127.0.0.1:9160")
+    client2 = ThriftNotAcceleratedStrategy.new(keyspace, "127.0.0.1:9160")
+    Benchmark.bm(100)do|x|
+        x.report("Thrift accelarated write test:") {client1.write_test }
+        x.report("Thrift NOT accelarated write test:") {client2.write_test }
     end
-    puts time
+    Benchmark.bm(100)do|x|
+        x.report("Thrift accelarated read test:") {client1.write_test }
+        x.report("Thrift NOT accelarated read test:") {client2.write_test }
+    end
   end
 
 end
