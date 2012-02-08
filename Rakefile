@@ -81,12 +81,12 @@ namespace :db do
     client1 = ThriftAcceleratedStrategy.new(keyspace, "127.0.0.1:9160")
     client2 = ThriftNotAcceleratedStrategy.new(keyspace, "127.0.0.1:9160")
     Benchmark.bm(100)do|x|
-        x.report("Thrift accelarated write test:") {client1.write_test }
-        x.report("Thrift NOT accelarated write test:") {client2.write_test }
+        x.report("Thrift accelarated write tests") {client1.write_test }
+        x.report("Thrift NOT accelarated write tests") {client2.write_test }
     end
     Benchmark.bm(100)do|x|
-        x.report("Thrift accelarated read test:") {client1.write_test }
-        x.report("Thrift NOT accelarated read test:") {client2.write_test }
+        x.report("Thrift accelarated read tests") {client1.write_test }
+        x.report("Thrift NOT accelarated read tests") {client2.write_test }
     end
   end
 
