@@ -52,7 +52,7 @@ class ThriftAcceleratedStrategy
 
   def read_wide_rows(row_count)
     rows_read = 0
-    @connection.each(@column_family_wide.intern, :count=>1) do |row|
+    @connection.each(@column_family_wide.intern, :count=>row_count) do |row|
           rows_read += 1
           #return if row_count > rows_read
     end

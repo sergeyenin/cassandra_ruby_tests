@@ -71,13 +71,13 @@ class CqlStrategy
 
   def read_wide_rows(row_count)
     rows_read = 0
-    @connection.execute("SELECT * FROM #{@column_family_wide}").fetch{|row| rows_read += 1}
+    @connection.execute("SELECT * FROM #{@column_family_wide} LIMIT #{row_count}").fetch{|row| rows_read += 1}
     rows_read
   end
 
   def read_rows(row_count)
     rows_read = 0
-    @connection.execute("SELECT * FROM #{@column_family}").fetch{|row| rows_read += 1}
+    @connection.execute("SELECT * FROM #{@column_family} LIMIT #{row_count}").fetch{|row| rows_read += 1}
     rows_read
   end
 end
