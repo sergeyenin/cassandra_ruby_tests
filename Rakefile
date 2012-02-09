@@ -16,6 +16,9 @@ COLUMN_FAMILIES = ["ThriftAccelerated", "ThriftAcceleratedWide", "Thrift", "Thri
 COLUMN_FAMILIES_CQL = ["ThriftAcceleratedCQL", "ThriftAcceleratedCQLWide"]
 RightSupport::DB::CassandraModel.config = YAML.load_file(File.expand_path("../config/database.yml",__FILE__))
 
+#make it keep silence in warnings
+$VERBOSE = nil
+
 if ['development', 'test'].include?(ENV['RACK_ENV'])
   LOGGER = Logger.new(STDERR)
 else
