@@ -6,14 +6,6 @@ module CassandraStrategy
     raise "connect should be implemented in ConcreteStrategy"
   end
 
-  def clean
-    raise "clean should be implemented in ConcreteStrategy"
-  end
-
-  def setup
-    raise "setup should be implemented in ConcreteStrategy"
-  end
-
   def write_test
     raise "populate should be implemented in ConcreteStrategy"
   end

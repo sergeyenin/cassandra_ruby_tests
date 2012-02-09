@@ -33,7 +33,7 @@ end
 namespace :db do
   desc "clean database"
   task :clean do
-    cassandra = Cassandra.new "system"
+    cassandra = Cassandra.new("system", RightSupport::DB::CassandraModel.config[environment]["server"])
     existing_keyspaces = cassandra.send(:client).describe_keyspaces.to_a.map{|k| k.name}.sort
     if existing_keyspaces.include? keyspace
       cassandra.send(:client).system_drop_keyspace(keyspace)
@@ -47,7 +47,7 @@ namespace :db do
     puts "Setting up Keyspaces and ColumnFamilies...."
 
 
-    cassandra = Cassandra.new "system"
+    cassandra = Cassandra.new("system", RightSupport::DB::CassandraModel.config[environment]["server"])
     existing_keyspaces = cassandra.send(:client).describe_keyspaces.to_a.map{|k| k.name}.sort
 
     #puts "current keyspaces:"
@@ -78,8 +78,8 @@ namespace :db do
 
   desc "performs tests on avaible strategies"
   task :test=> [:setup] do
-    client1 = ThriftAcceleratedStrategy.new(keyspace, "127.0.0.1:9160")
-    client2 = ThriftNotAcceleratedStrategy.new(keyspace, "127.0.0.1:9160")
+    client1 = ThriftAcceleratedStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
+    client2 = ThriftNotAcceleratedStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
     Benchmark.bm(100)do|x|
         x.report("Thrift accelarated write tests") {client1.write_test }
         x.report("Thrift NOT accelarated write tests") {client2.write_test }
