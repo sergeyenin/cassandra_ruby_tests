@@ -20,9 +20,9 @@ class CqlStrategy
     insert_rows(row_count)
   end
 
-  def read_test
-    read_wide_rows(1000)
-    read_rows(1000)
+  def read_test(wide_row_count=1000, row_count=1000)
+    read_wide_rows(wide_row_count)
+    read_rows(row_count)
   end
 
   def setup_connection!(keyspace, column_family="ThriftAcceleratedCQL", column_family_wide="ThriftAcceleratedCQLWide")

@@ -20,10 +20,10 @@ class ThriftAcceleratedStrategy
   end
 
 
-  def read_test
+  def read_test(wide_row_count=1000, row_count=1000)
     raise "No cassandra connection found." unless @connection
-    read_wide_rows(1000)
-    read_rows(1000)
+    read_wide_rows(wide_row_count)
+    read_rows(row_count)
   end
 
 

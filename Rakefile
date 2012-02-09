@@ -86,15 +86,15 @@ namespace :db do
     clientT = ThriftNotAcceleratedStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
     clientCql = CqlStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
     clientCql.setup_connection!(keyspace)
-    Benchmark.bm(100)do|x|
-        x.report("Thrift CQL accelarated write tests") {clientCql.write_test }
-        x.report("Thrift accelarated write tests") {clientTAS.write_test }
-        x.report("Thrift NOT accelarated write tests") {clientT.write_test }
+    Benchmark.bm(100) do |x|
+        x.report("Thrift CQL accelarated write tests") {clientCql.write_test(10**6, 100, 10**6) }
+        x.report("Thrift accelarated write tests") {clientTAS.write_test(10**6, 100, 10**6) }
+        x.report("Thrift NOT accelarated write tests") {clientT.write_test(10**6, 100, 10**6) }
     end
     Benchmark.bm(100)do|x|
-        x.report("Thrift CQL accelarated read tests") {clientCql.read_test }
-        x.report("Thrift accelarated read tests") {clientTAS.read_test }
-        x.report("Thrift NOT accelarated read tests") {clientT.read_test }
+        x.report("Thrift CQL accelarated read tests") {clientCql.read_test(10**6, 10**6) }
+        x.report("Thrift accelarated read tests") {clientTAS.read_test(10**6, 10**6) }
+        x.report("Thrift NOT accelarated read tests") {clientT.read_test(10**6, 10**6) }
     end
   end
 
