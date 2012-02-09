@@ -13,6 +13,7 @@ require 'right_support'
 
 require File.expand_path("../lib/cassandra_ruby_test.rb",__FILE__)
 COLUMN_FAMILIES = ["ThriftAccelerated", "ThriftAcceleratedWide", "Thrift", "ThriftWide"]
+COLUMN_FAMILIES_CQL = ["ThriftAcceleratedCQL", "ThriftAcceleratedCQLWide"]
 RightSupport::DB::CassandraModel.config = YAML.load_file(File.expand_path("../config/database.yml",__FILE__))
 
 if ['development', 'test'].include?(ENV['RACK_ENV'])
@@ -78,15 +79,19 @@ namespace :db do
 
   desc "performs tests on avaible strategies"
   task :test=> [:setup] do
-    client1 = ThriftAcceleratedStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
-    client2 = ThriftNotAcceleratedStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
+    clientTAS = ThriftAcceleratedStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
+    clientT = ThriftNotAcceleratedStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
+    clientCql = CqlStrategy.new(keyspace, RightSupport::DB::CassandraModel.config[environment]["server"])
+    clientCql.setup_connection!(keyspace)
     Benchmark.bm(100)do|x|
-        x.report("Thrift accelarated write tests") {client1.write_test }
-        x.report("Thrift NOT accelarated write tests") {client2.write_test }
+        x.report("Thrift CQL accelarated write tests") {clientCql.write_test }
+        x.report("Thrift accelarated write tests") {clientTAS.write_test }
+        x.report("Thrift NOT accelarated write tests") {clientT.write_test }
     end
     Benchmark.bm(100)do|x|
-        x.report("Thrift accelarated read tests") {client1.write_test }
-        x.report("Thrift NOT accelarated read tests") {client2.write_test }
+        x.report("Thrift CQL accelarated read tests") {clientCql.read_test }
+        x.report("Thrift accelarated read tests") {clientTAS.read_test }
+        x.report("Thrift NOT accelarated read tests") {clientT.read_test }
     end
   end
 

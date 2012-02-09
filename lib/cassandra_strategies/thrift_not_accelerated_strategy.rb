@@ -6,10 +6,10 @@ class ThriftNotAcceleratedStrategy < ThriftAcceleratedStrategy
   def initialize(keyspace, connection_string, column_family="Thrift", column_family_wide="ThriftWide")
     @column_family = column_family
     @column_family_wide = column_family_wide
-    self.connect(keyspace, connection_string)
+    self.connect!(keyspace, connection_string)
   end
 
-  def connect(keyspace, connection_string)
+  def connect!(keyspace, connection_string)
     @connection = Cassandra.new(keyspace, connection_string) or raise "connect should be implemented in ConcreteStrategy"
   end
 

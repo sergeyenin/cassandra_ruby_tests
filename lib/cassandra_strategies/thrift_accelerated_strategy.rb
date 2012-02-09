@@ -6,19 +6,11 @@ class ThriftAcceleratedStrategy
   def initialize(keyspace, connection_string, column_family="ThriftAccelerated", column_family_wide="ThriftAcceleratedWide")
     @column_family = column_family
     @column_family_wide = column_family_wide
-    self.connect(keyspace, connection_string)
+    self.connect!(keyspace, connection_string)
   end
 
-  def connect(keyspace, connection_string)
+  def connect!(keyspace, connection_string)
     @connection = Cassandra.new(keyspace, connection_string, {:protocol => Thrift::BinaryProtocolAccelerated}) or raise "connect should be implemented in ConcreteStrategy"
-  end
-
-  def clean
-      raise "clean should be implemented in CQL strategy"
-  end
-
-  def setup
-      raise "setup should be implemented in CQL strategy"
   end
 
   def write_test(wide_row_count=1000, wide_row_column_count=100, row_count=1000)

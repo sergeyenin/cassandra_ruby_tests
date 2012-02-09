@@ -2,7 +2,7 @@ module CassandraStrategy
 
   attr_accessor :connection, :column_family, :column_family_wide
 
-  def connect
+  def connect!
     raise "connect should be implemented in ConcreteStrategy"
   end
 
