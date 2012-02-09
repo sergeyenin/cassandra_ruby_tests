@@ -9,4 +9,4 @@ require 'test_column_family'
 $:.unshift File.expand_path("../cassandra_strategies",__FILE__)
 require 'thrift_accelerated_strategy'
 require 'thrift_not_accelerated_strategy'
-#require 'cql_strategy'
+require 'cql_strategy'
