@@ -11,7 +11,7 @@ class CqlStrategy
   end
 
   def connect!(keyspace, connection_string)
-    @connection = CassandraCQL::Database.new(connection_string, {:keyspace => keyspace}, {:protocol => Thrift::BinaryProtocolAccelerated})
+    @connection = CassandraCQL::Database.new(connection_string, {:keyspace => keyspace})
   end
 
   def write_test(wide_row_count=1000, wide_row_column_count=100, row_count=1000)

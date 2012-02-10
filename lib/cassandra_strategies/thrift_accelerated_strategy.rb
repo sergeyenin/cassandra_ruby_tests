@@ -10,7 +10,7 @@ class ThriftAcceleratedStrategy
   end
 
   def connect!(keyspace, connection_string)
-    @connection = Cassandra.new(keyspace, connection_string, {:protocol => Thrift::BinaryProtocolAccelerated}) or raise "connect should be implemented in ConcreteStrategy"
+      @connection = Cassandra.new(keyspace, connection_string, {:protocol => Thrift::BinaryProtocolAccelerated}) or raise "connect should be implemented in ConcreteStrategy"
   end
 
   def write_test(wide_row_count=1000, wide_row_column_count=100, row_count=1000)

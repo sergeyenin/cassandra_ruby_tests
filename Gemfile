@@ -11,7 +11,7 @@ gem "cassandra-cql"
 gem "thrift"
 
 gem "forgery"
-gem "cassandra", :require => "cassandra/0.8"
+gem "cassandra"
 gem "right_support", :git => "git://github.com/rightscale/right_support.git"
 
 gem "right_aws"
