@@ -8,7 +8,9 @@ gem "rake", "0.8.7"
 gem "simple_uuid", "0.2.0"
 gem "thrift_client", "0.7.1"
 gem "cassandra-cql"
-gem "thrift"
+
+#please, see http://blog.creapptives.com/post/12121356870/rvm-ruby-1-9-2-thrift-0-7-0-rrt-really-really for more details
+gem "thrift", :path=>"/home/sergey/work/rightscale/thrift-0.7.0/"
 
 gem "forgery"
 gem "cassandra", :require => "cassandra/0.8"
